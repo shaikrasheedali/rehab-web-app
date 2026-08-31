@@ -21,6 +21,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,6 +61,7 @@ export const createApp = () => {
   });
 
   // Mount API Routes
+  app.use('/api/auth', authRoutes);
   app.use('/api/services', serviceRoutes);
   app.use('/api/packages', packageRoutes);
   app.use('/api/inquiries', inquiryRoutes);

@@ -33,6 +33,16 @@ export function AppProvider({ children }) {
   const [commandOpen, setCommandOpen] = useState(false);
   const [admissionDraft, setAdmissionDraft] = useState(null);
 
+  // Admin Session State
+  const [adminToken, setAdminToken] = useState(() => localStorage.getItem('st-admin-token') || '');
+  const [adminUser, setAdminUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('st-admin-user')) || null;
+    } catch {
+      return null;
+    }
+  });
+
   // Core Data Cache
   const [services, setServices] = useState([]);
   const [packages, setPackages] = useState([]);
@@ -42,6 +52,43 @@ export function AppProvider({ children }) {
   const [accommodations, setAccommodations] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Admin Auth Helpers
+  const login = useCallback((user, token) => {
+    setAdminToken(token);
+    setAdminUser(user);
+    localStorage.setItem('st-admin-token', token);
+    localStorage.setItem('st-admin-user', JSON.stringify(user));
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await api.logoutAdmin();
+    } catch {
+      // ignore
+    } finally {
+      setAdminToken('');
+      setAdminUser(null);
+      localStorage.removeItem('st-admin-token');
+      localStorage.removeItem('st-admin-user');
+    }
+  }, []);
+
+  // Verify Admin Session on mount if token exists
+  useEffect(() => {
+    if (adminToken) {
+      api.getAdminMe()
+        .then(res => {
+          if (res?.user) {
+            setAdminUser(res.user);
+            localStorage.setItem('st-admin-user', JSON.stringify(res.user));
+          }
+        })
+        .catch(() => {
+          logout();
+        });
+    }
+  }, [adminToken, logout]);
 
   // Translation helper
   const t = useCallback((key) => {
@@ -271,6 +318,11 @@ export function AppProvider({ children }) {
     setAdmissionDraft,
     beginAdmission,
     t,
+    // Admin Auth
+    adminUser,
+    adminToken,
+    login,
+    logout,
     // Data & Fetchers
     services,
     setServices,

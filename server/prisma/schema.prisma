@@ -1,32 +1,44 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
+model AdminUser {
+  id           String    @id
+  username     String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("ADMIN")
+  active       Boolean   @default(true)
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
 model Service {
-  id        String   @id
-  name      String
-  kind      String   // "in-package" | "off-package"
-  rate      Float
-  summary   String
-  content   String
-  benefits  String   // JSON string array
-  images    String   // JSON string array
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id // e.g. "svc-physio", "svc-neuro"
+  name       String
+  kind       String   // "in-package" | "off-package"
+  rate       Float
+  summary    String
+  content    String
+  benefits   String   @default("[]") // JSON string array
+  images     String   @default("[]") // JSON string array
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Package {
-  id         String   @id
+  id         String   @id // e.g. "pkg-recovery", "pkg-stroke"
   name       String
   rate       Float
-  benefits   String   // JSON string array
-  serviceIds String   // JSON string array of Service IDs
+  benefits   String   @default("[]") // JSON string array
+  serviceIds String   @default("[]") // JSON string array of Service IDs
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -73,10 +85,6 @@ model Admission {
   contact             String
   phone               String
   address             String?
-  need                String?
-  language            String?  @default("English")
-  currentLocation     String?  @default("At home")
-  roomPreference      String?  @default("No preference")
   admissionDate       String
   expectedDischarge   String?
   actualDischarge     String?
@@ -84,9 +92,14 @@ model Admission {
   accommodationId     String?
   packageId           String?
   offPackageServiceIds String  @default("[]") // JSON string array
-  sourceInquiryId     String?
   status              String   @default("Admitted") // "Admitted" | "Discharged"
+  need                String?
+  language            String?
+  roomPreference      String?
+  currentLocation     String?
+  medicalSummary      String?
   dischargeSummary    String?
+  sourceInquiryId     String?
   finalBill           String?  // JSON string
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

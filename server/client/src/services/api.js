@@ -8,10 +8,26 @@ const client = axios.create({
   }
 });
 
+// Request interceptor to attach JWT token
+client.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('st-admin-token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
 // Response extractor interceptor
 client.interceptors.response.use(
   response => response.data?.data !== undefined ? response.data.data : response.data,
   error => {
+    if (error.response?.status === 401 && window.location.pathname.startsWith('/admin')) {
+      localStorage.removeItem('st-admin-token');
+      localStorage.removeItem('st-admin-user');
+    }
     const message =
       error.response?.data?.message ||
       error.message ||
@@ -19,6 +35,12 @@ client.interceptors.response.use(
     return Promise.reject(new Error(message));
   }
 );
+
+// Auth
+export const loginAdmin = (credentials) => client.post('/auth/login', credentials);
+export const getAdminMe = () => client.get('/auth/me');
+export const logoutAdmin = () => client.post('/auth/logout');
+export const changeAdminPassword = (data) => client.post('/auth/change-password', data);
 
 // Services
 export const getServices = (params) => client.get('/services', { params });

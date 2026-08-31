@@ -675,6 +675,27 @@ export async function main() {
     console.log(`Payment table already has ${paymentCount} rows, skipping.`);
   }
 
+  // 10. Admin User
+  const adminCount = await prisma.adminUser.count();
+  if (adminCount === 0) {
+    console.log("Inserting initial admin user seed (Argon2id)...");
+    const { hashPassword } = await import('../src/utils/authUtils.js');
+    const passwordHash = await hashPassword('ThirumalaAdmin@2026');
+    await prisma.adminUser.create({
+      data: {
+        id: 'ADM-USR-01',
+        username: 'admin',
+        passwordHash,
+        name: 'Ananya Rao',
+        role: 'ADMIN',
+        active: true
+      }
+    });
+    console.log("Default admin created: username 'admin', password 'ThirumalaAdmin@2026'");
+  } else {
+    console.log(`AdminUser table already has ${adminCount} rows, skipping.`);
+  }
+
   console.log("✅ Seed check and execution completed successfully.");
 }
 
