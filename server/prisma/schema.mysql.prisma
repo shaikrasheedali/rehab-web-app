@@ -26,8 +26,8 @@ model Service {
   rate       Float
   summary    String   @db.Text
   content    String   @db.LongText
-  benefits   String   @db.Text
-  images     String   @db.Text
+  benefits   String   @default("[]") @db.VarChar(2048)
+  images     String   @default("[]") @db.VarChar(2048)
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -37,8 +37,8 @@ model Package {
   id         String   @id @db.VarChar(64)
   name       String   @db.VarChar(191)
   rate       Float
-  benefits   String   @db.Text
-  serviceIds String   @db.Text
+  benefits   String   @default("[]") @db.VarChar(2048)
+  serviceIds String   @default("[]") @db.VarChar(2048)
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -58,10 +58,10 @@ model Inquiry {
   room                String   @default("No preference") @db.VarChar(64)
   currentLocation     String   @default("At home") @db.VarChar(64)
   packageId           String?  @db.VarChar(64)
-  offPackageServiceIds String  @db.Text
+  offPackageServiceIds String  @default("[]") @db.VarChar(2048)
   status              String   @default("New") @db.VarChar(32)
   priority            String   @default("Normal") @db.VarChar(32)
-  basket              String   @db.Text
+  basket              String   @default("[]") @db.VarChar(2048)
   consent             Boolean  @default(true)
   contactRequest      Boolean  @default(false)
   createdAt           DateTime @default(now())
@@ -91,7 +91,7 @@ model Admission {
   stayType            String   @default("staying") @db.VarChar(32)
   accommodationId     String?  @db.VarChar(64)
   packageId           String?  @db.VarChar(64)
-  offPackageServiceIds String  @db.Text
+  offPackageServiceIds String  @default("[]") @db.VarChar(2048)
   status              String   @default("Admitted") @db.VarChar(32)
   need                String?  @db.Text
   language            String?  @db.VarChar(32)
@@ -130,8 +130,8 @@ model BillingProfile {
   packageId           String?   @db.VarChar(64)
   packageDiscountType String    @default("percent") @db.VarChar(32)
   packageDiscount     Float     @default(0)
-  addOns              String    @db.Text
-  customLines         String    @db.Text
+  addOns              String    @default("[]") @db.VarChar(2048)
+  customLines         String    @default("[]") @db.VarChar(2048)
   globalType          String    @default("percent") @db.VarChar(32)
   globalDiscount      Float     @default(0)
   tax                 Float     @default(0)
@@ -160,7 +160,7 @@ model MediaItem {
   content     String   @db.LongText
   mediaUrl    String?  @db.VarChar(512)
   image       String?  @db.VarChar(512)
-  images      String   @db.Text
+  images      String   @default("[]") @db.VarChar(2048)
   author      String   @db.VarChar(128)
   publishedAt String   @db.VarChar(32)
   active      Boolean  @default(true)

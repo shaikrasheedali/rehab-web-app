@@ -4,6 +4,7 @@ import { prisma } from '../../src/config/prisma.js';
 import { hashPassword } from '../../src/utils/authUtils.js';
 
 const app = createApp();
+jest.setTimeout(30000);
 
 describe('Admin Authentication & Session API Integration Tests (Argon2id)', () => {
   const testUsername = 'testadmin';

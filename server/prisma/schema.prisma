@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -8,11 +8,11 @@ generator client {
 }
 
 model AdminUser {
-  id           String    @id
-  username     String    @unique
-  passwordHash String
-  name         String
-  role         String    @default("ADMIN")
+  id           String    @id @db.VarChar(64)
+  username     String    @unique @db.VarChar(64)
+  passwordHash String    @db.VarChar(255)
+  name         String    @db.VarChar(128)
+  role         String    @default("ADMIN") @db.VarChar(32)
   active       Boolean   @default(true)
   lastLogin    DateTime?
   createdAt    DateTime  @default(now())
@@ -20,48 +20,48 @@ model AdminUser {
 }
 
 model Service {
-  id         String   @id // e.g. "svc-physio", "svc-neuro"
-  name       String
-  kind       String   // "in-package" | "off-package"
+  id         String   @id @db.VarChar(64)
+  name       String   @db.VarChar(191)
+  kind       String   @db.VarChar(32)
   rate       Float
-  summary    String
-  content    String
-  benefits   String   @default("[]") // JSON string array
-  images     String   @default("[]") // JSON string array
+  summary    String   @db.Text
+  content    String   @db.LongText
+  benefits   String   @default("[]") @db.VarChar(2048)
+  images     String   @default("[]") @db.VarChar(2048)
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
 model Package {
-  id         String   @id // e.g. "pkg-recovery", "pkg-stroke"
-  name       String
+  id         String   @id @db.VarChar(64)
+  name       String   @db.VarChar(191)
   rate       Float
-  benefits   String   @default("[]") // JSON string array
-  serviceIds String   @default("[]") // JSON string array of Service IDs
+  benefits   String   @default("[]") @db.VarChar(2048)
+  serviceIds String   @default("[]") @db.VarChar(2048)
   active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
 model Inquiry {
-  id                  String   @id
-  patient             String
-  contact             String
-  phone               String
-  email               String?
-  need                String
-  date                String
-  start               String?
-  duration            String
-  language            String   @default("English")
-  room                String   @default("No preference")
-  currentLocation     String   @default("At home")
-  packageId           String?
-  offPackageServiceIds String  @default("[]") // JSON string array
-  status              String   @default("New") // "New" | "Contacted" | "Quote sent" | "Admitted"
-  priority            String   @default("Normal") // "Normal" | "High" | "Medium"
-  basket              String   @default("[]") // JSON string array
+  id                  String   @id @db.VarChar(64)
+  patient             String   @db.VarChar(191)
+  contact             String   @db.VarChar(191)
+  phone               String   @db.VarChar(32)
+  email               String?  @db.VarChar(191)
+  need                String   @db.Text
+  date                String   @db.VarChar(32)
+  start               String?  @db.VarChar(32)
+  duration            String   @db.VarChar(64)
+  language            String   @default("English") @db.VarChar(32)
+  room                String   @default("No preference") @db.VarChar(64)
+  currentLocation     String   @default("At home") @db.VarChar(64)
+  packageId           String?  @db.VarChar(64)
+  offPackageServiceIds String  @default("[]") @db.VarChar(2048)
+  status              String   @default("New") @db.VarChar(32)
+  priority            String   @default("Normal") @db.VarChar(32)
+  basket              String   @default("[]") @db.VarChar(2048)
   consent             Boolean  @default(true)
   contactRequest      Boolean  @default(false)
   createdAt           DateTime @default(now())
@@ -69,38 +69,38 @@ model Inquiry {
 }
 
 model Accommodation {
-  id        String   @id // e.g. "ROOM-101", "BED-201-A"
-  type      String   // "Room" | "Bed"
-  label     String
+  id        String   @id @db.VarChar(64)
+  type      String   @db.VarChar(32)
+  label     String   @db.VarChar(128)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Admission {
-  id                  String   @id // e.g. "ADM-1042"
-  patient             String
+  id                  String   @id @db.VarChar(64)
+  patient             String   @db.VarChar(191)
   age                 Int?
-  gender              String?
-  contact             String
-  phone               String
-  address             String?
-  admissionDate       String
-  expectedDischarge   String?
-  actualDischarge     String?
-  stayType            String   @default("staying") // "staying" | "non-staying"
-  accommodationId     String?
-  packageId           String?
-  offPackageServiceIds String  @default("[]") // JSON string array
-  status              String   @default("Admitted") // "Admitted" | "Discharged"
-  need                String?
-  language            String?
-  roomPreference      String?
-  currentLocation     String?
-  medicalSummary      String?
-  dischargeSummary    String?
-  sourceInquiryId     String?
-  finalBill           String?  // JSON string
+  gender              String?  @db.VarChar(32)
+  contact             String   @db.VarChar(191)
+  phone               String   @db.VarChar(32)
+  address             String?  @db.Text
+  admissionDate       String   @db.VarChar(32)
+  expectedDischarge   String?  @db.VarChar(32)
+  actualDischarge     String?  @db.VarChar(32)
+  stayType            String   @default("staying") @db.VarChar(32)
+  accommodationId     String?  @db.VarChar(64)
+  packageId           String?  @db.VarChar(64)
+  offPackageServiceIds String  @default("[]") @db.VarChar(2048)
+  status              String   @default("Admitted") @db.VarChar(32)
+  need                String?  @db.Text
+  language            String?  @db.VarChar(32)
+  roomPreference      String?  @db.VarChar(64)
+  currentLocation     String?  @db.VarChar(64)
+  medicalSummary      String?  @db.Text
+  dischargeSummary    String?  @db.Text
+  sourceInquiryId     String?  @db.VarChar(64)
+  finalBill           String?  @db.LongText
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -110,29 +110,29 @@ model Admission {
 }
 
 model ResidentProgress {
-  id          String    @id
-  admissionId String
+  id          String    @id @db.VarChar(64)
+  admissionId String    @db.VarChar(64)
   admission   Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
   at          DateTime  @default(now())
-  author      String
-  status      String
-  category    String
-  note        String
+  author      String    @db.VarChar(128)
+  status      String    @db.VarChar(64)
+  category    String    @db.VarChar(64)
+  note        String    @db.Text
   createdAt   DateTime  @default(now())
 }
 
 model BillingProfile {
-  id                  String    @id
-  admissionId         String    @unique
+  id                  String    @id @db.VarChar(64)
+  admissionId         String    @unique @db.VarChar(64)
   admission           Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
-  start               String
-  end                 String
-  packageId           String?
-  packageDiscountType String    @default("percent")
+  start               String    @db.VarChar(32)
+  end                 String    @db.VarChar(32)
+  packageId           String?   @db.VarChar(64)
+  packageDiscountType String    @default("percent") @db.VarChar(32)
   packageDiscount     Float     @default(0)
-  addOns              String    @default("[]") // JSON string array of add-on lines
-  customLines         String    @default("[]") // JSON string array of custom lines
-  globalType          String    @default("percent")
+  addOns              String    @default("[]") @db.VarChar(2048)
+  customLines         String    @default("[]") @db.VarChar(2048)
+  globalType          String    @default("percent") @db.VarChar(32)
   globalDiscount      Float     @default(0)
   tax                 Float     @default(0)
   createdAt           DateTime  @default(now())
@@ -140,29 +140,29 @@ model BillingProfile {
 }
 
 model Payment {
-  id          String    @id
-  admissionId String
+  id          String    @id @db.VarChar(64)
+  admissionId String    @db.VarChar(64)
   admission   Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
   amount      Float
   at          DateTime  @default(now())
-  note        String?
-  method      String    @default("UPI")
+  note        String?   @db.Text
+  method      String    @default("UPI") @db.VarChar(64)
   createdAt   DateTime  @default(now())
 }
 
 model MediaItem {
-  id          String   @id
-  section     String   // "blog" | "testimonial" | "post"
-  subtype     String   // "article" | "testimonial-video" | "youtube-video" | "instagram-post" | "instagram-reel" | "facebook-reel" | "facebook-post" | "x-post" | "image"
-  title       String
-  excerpt     String?
-  caption     String?
-  content     String
-  mediaUrl    String?
-  image       String?
-  images      String   @default("[]") // JSON string array
-  author      String
-  publishedAt String
+  id          String   @id @db.VarChar(64)
+  section     String   @db.VarChar(32)
+  subtype     String   @db.VarChar(64)
+  title       String   @db.VarChar(255)
+  excerpt     String?  @db.Text
+  caption     String?  @db.VarChar(255)
+  content     String   @db.LongText
+  mediaUrl    String?  @db.VarChar(512)
+  image       String?  @db.VarChar(512)
+  images      String   @default("[]") @db.VarChar(2048)
+  author      String   @db.VarChar(128)
+  publishedAt String   @db.VarChar(32)
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
