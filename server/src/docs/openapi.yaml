@@ -1,0 +1,911 @@
+openapi: 3.0.3
+info:
+  title: Sri Thirumala Rehabilitation Centre & Nursing Home API
+  description: Complete RESTful API documentation for Sri Thirumala Rehabilitation Centre and Nursing Home clinical operating system and patient public portal.
+  version: 1.0.0
+  contact:
+    name: Sri Thirumala Care Team
+    url: https://srithirumala.com
+    email: admissions@srithirumala.com
+servers:
+  - url: http://localhost:5000/api
+    description: Local Development Server
+  - url: /api
+    description: Relative API Root
+
+paths:
+  /services:
+    get:
+      summary: Retrieve all services
+      description: Returns a list of in-package and off-package catalog services.
+      parameters:
+        - in: query
+          name: kind
+          schema:
+            type: string
+            enum: [in-package, off-package]
+          description: Filter by service classification
+        - in: query
+          name: active
+          schema:
+            type: boolean
+          description: Filter by active/published status
+      responses:
+        '200':
+          description: A list of services
+    post:
+      summary: Create a new service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceInput'
+      responses:
+        '201':
+          description: Service created
+
+  /services/{id}:
+    get:
+      summary: Get service by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Service details
+        '404':
+          description: Service not found
+    put:
+      summary: Update an existing service
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceInput'
+      responses:
+        '200':
+          description: Service updated
+    delete:
+      summary: Delete a service
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Service deleted
+
+  /packages:
+    get:
+      summary: Retrieve all care packages
+      parameters:
+        - in: query
+          name: active
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of packages
+    post:
+      summary: Create a care package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageInput'
+      responses:
+        '201':
+          description: Package created
+
+  /packages/{id}:
+    get:
+      summary: Get package by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Package details
+    put:
+      summary: Update a care package
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageInput'
+      responses:
+        '200':
+          description: Package updated
+    delete:
+      summary: Delete a package
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Package deleted
+
+  /inquiries:
+    get:
+      summary: List all inquiries
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [All, New, Contacted, Quote sent, Admitted]
+        - in: query
+          name: priority
+          schema:
+            type: string
+            enum: [All, Normal, High, Medium]
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Inquiries list
+    post:
+      summary: Submit a new inquiry or contact form
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InquiryInput'
+      responses:
+        '201':
+          description: Inquiry registered
+
+  /inquiries/{id}:
+    get:
+      summary: Get inquiry details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Inquiry details
+    put:
+      summary: Update inquiry status and priority
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                priority:
+                  type: string
+      responses:
+        '200':
+          description: Status updated
+    delete:
+      summary: Delete an inquiry
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Inquiry deleted
+
+  /accommodations:
+    get:
+      summary: List all rooms and beds with live occupancy status
+      responses:
+        '200':
+          description: Accommodations list with occupancy
+    post:
+      summary: Add a new room or bed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccommodationInput'
+      responses:
+        '201':
+          description: Unit created
+
+  /accommodations/{id}:
+    put:
+      summary: Update a room or bed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                label:
+                  type: string
+                active:
+                  type: boolean
+      responses:
+        '200':
+          description: Accommodation updated
+    delete:
+      summary: Delete an unoccupied room or bed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Accommodation deleted
+
+  /admissions:
+    get:
+      summary: List all admissions
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [Admitted, Discharged]
+        - in: query
+          name: stayType
+          schema:
+            type: string
+            enum: [staying, non-staying]
+      responses:
+        '200':
+          description: Admissions list
+    post:
+      summary: Register a new patient admission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdmissionInput'
+      responses:
+        '201':
+          description: Patient admitted
+
+  /admissions/{id}:
+    get:
+      summary: Get admission details by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Admission details
+    put:
+      summary: Update patient admission details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdmissionInput'
+      responses:
+        '200':
+          description: Admission updated
+    delete:
+      summary: Delete an admission record
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Admission deleted
+
+  /admissions/{id}/discharge:
+    post:
+      summary: Discharge a patient
+      description: Verifies that outstanding due is 0, saves the actual discharge date and summary note, records snapshot final bill, and archives the patient.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - dischargeSummary
+              properties:
+                actualDischarge:
+                  type: string
+                  format: date
+                dischargeSummary:
+                  type: string
+      responses:
+        '200':
+          description: Patient discharged successfully
+        '400':
+          description: Outstanding balance must be cleared or missing summary
+
+  /progress/admission/{admissionId}:
+    get:
+      summary: Get care timeline progress records for an admission
+      parameters:
+        - in: path
+          name: admissionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Progress timeline
+
+  /progress:
+    post:
+      summary: Log a care timeline progress note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - admissionId
+                - author
+                - note
+              properties:
+                admissionId:
+                  type: string
+                author:
+                  type: string
+                status:
+                  type: string
+                category:
+                  type: string
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Progress note logged
+
+  /billing/admission/{admissionId}:
+    get:
+      summary: Retrieve patient billing profile and dynamically computed invoice
+      parameters:
+        - in: path
+          name: admissionId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: through
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Computed patient bill
+    post:
+      summary: Save or update flexible patient billing profile
+      parameters:
+        - in: path
+          name: admissionId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingProfileInput'
+      responses:
+        '200':
+          description: Billing profile saved and recalculated
+
+  /billing/preview:
+    post:
+      summary: Dynamically calculate patient bill preview without persisting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                admissionId:
+                  type: string
+                profile:
+                  $ref: '#/components/schemas/BillingProfileInput'
+                amountPaid:
+                  type: number
+      responses:
+        '200':
+          description: Calculation breakdown
+
+  /payments/admission/{admissionId}:
+    get:
+      summary: Get payment history and total paid for an admission
+      parameters:
+        - in: path
+          name: admissionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment history
+
+  /payments:
+    post:
+      summary: Record a patient payment receipt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - admissionId
+                - amount
+              properties:
+                admissionId:
+                  type: string
+                amount:
+                  type: number
+                method:
+                  type: string
+                  enum: [UPI, Bank transfer, Cash, Card]
+                note:
+                  type: string
+      responses:
+        '201':
+          description: Payment recorded
+
+  /media:
+    get:
+      summary: Get blogs, testimonials, and gallery posts
+      parameters:
+        - in: query
+          name: section
+          schema:
+            type: string
+            enum: [all, blog, testimonial, post]
+        - in: query
+          name: active
+          schema:
+            type: boolean
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media items list
+    post:
+      summary: Publish a new media item or blog article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaItemInput'
+      responses:
+        '201':
+          description: Media item created
+
+  /media/{id}:
+    get:
+      summary: Get media item by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media item details
+    put:
+      summary: Update a media item
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaItemInput'
+      responses:
+        '200':
+          description: Media item updated
+    delete:
+      summary: Delete a media item
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media item deleted
+
+  /uploads/single:
+    post:
+      summary: Upload a single image or document
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [services, blogs, media, documents, general]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: File uploaded
+
+  /uploads/multiple:
+    post:
+      summary: Upload multiple images or documents
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [services, blogs, media, documents, general]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Files uploaded
+
+  /stats/dashboard:
+    get:
+      summary: Retrieve aggregated admin dashboard KPIs
+      responses:
+        '200':
+          description: Dashboard KPIs and metrics
+
+components:
+  schemas:
+    ServiceInput:
+      type: object
+      required:
+        - name
+        - rate
+        - summary
+      properties:
+        name:
+          type: string
+        kind:
+          type: string
+          enum: [in-package, off-package]
+        rate:
+          type: number
+        summary:
+          type: string
+        content:
+          type: string
+        benefits:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+
+    PackageInput:
+      type: object
+      required:
+        - name
+        - rate
+      properties:
+        name:
+          type: string
+        rate:
+          type: number
+        benefits:
+          type: array
+          items:
+            type: string
+        serviceIds:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+
+    InquiryInput:
+      type: object
+      required:
+        - patient
+        - contact
+        - phone
+      properties:
+        patient:
+          type: string
+        contact:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        need:
+          type: string
+        start:
+          type: string
+        duration:
+          type: string
+        language:
+          type: string
+        room:
+          type: string
+        currentLocation:
+          type: string
+        packageId:
+          type: string
+        offPackageServiceIds:
+          type: array
+          items:
+            type: string
+        basket:
+          type: array
+          items:
+            type: string
+        priority:
+          type: string
+        consent:
+          type: boolean
+
+    AccommodationInput:
+      type: object
+      required:
+        - id
+        - type
+        - label
+      properties:
+        id:
+          type: string
+          example: "ROOM-101"
+        type:
+          type: string
+          enum: [Room, Bed]
+        label:
+          type: string
+          example: "Private room 101"
+        active:
+          type: boolean
+
+    AdmissionInput:
+      type: object
+      required:
+        - patient
+        - contact
+        - phone
+        - admissionDate
+      properties:
+        patient:
+          type: string
+        age:
+          type: integer
+        gender:
+          type: string
+        contact:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        need:
+          type: string
+        language:
+          type: string
+        currentLocation:
+          type: string
+        roomPreference:
+          type: string
+        admissionDate:
+          type: string
+          format: date
+        expectedDischarge:
+          type: string
+          format: date
+        stayType:
+          type: string
+          enum: [staying, non-staying]
+        accommodationId:
+          type: string
+        packageId:
+          type: string
+        offPackageServiceIds:
+          type: array
+          items:
+            type: string
+        sourceInquiryId:
+          type: string
+
+    BillingProfileInput:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+        packageId:
+          type: string
+        packageDiscountType:
+          type: string
+          enum: [percent, fixed]
+        packageDiscount:
+          type: number
+        addOns:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              serviceId:
+                type: string
+              start:
+                type: string
+              end:
+                type: string
+              qty:
+                type: number
+              discountType:
+                type: string
+              discount:
+                type: number
+        customLines:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              pricingMode:
+                type: string
+                enum: [daily, fixed]
+              rate:
+                type: number
+              start:
+                type: string
+              end:
+                type: string
+              qty:
+                type: number
+              discountType:
+                type: string
+              discount:
+                type: number
+        globalType:
+          type: string
+          enum: [percent, fixed]
+        globalDiscount:
+          type: number
+        tax:
+          type: number
+
+    MediaItemInput:
+      type: object
+      required:
+        - title
+        - author
+        - section
+      properties:
+        section:
+          type: string
+          enum: [blog, testimonial, post]
+        subtype:
+          type: string
+        title:
+          type: string
+        excerpt:
+          type: string
+        caption:
+          type: string
+        content:
+          type: string
+        mediaUrl:
+          type: string
+        image:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        author:
+          type: string
+        publishedAt:
+          type: string
+          format: date
+        active:
+          type: boolean

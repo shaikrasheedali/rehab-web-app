@@ -1,0 +1,27 @@
+{
+  "name": "thirumala-fullstack",
+  "version": "1.0.0",
+  "description": "Sri Thirumala Rehabilitation Centre & Nursing Home Full-Stack Application",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "npm run install:server && npm run install:client && npm run prisma:setup",
+    "install:server": "npm --prefix server install",
+    "install:client": "npm --prefix server/client install",
+    "prisma:setup": "npm --prefix server run prisma:generate && npm --prefix server run prisma:push && npm --prefix server run seed",
+    "dev": "node scripts/dev.js",
+    "build": "npm --prefix server/client run build",
+    "start": "node server/src/server.js",
+    "test": "npm --prefix server test"
+  },
+  "keywords": [
+    "rehabilitation",
+    "healthcare",
+    "nursing-home",
+    "react19",
+    "express",
+    "prisma"
+  ],
+  "author": "Sri Thirumala Care Team",
+  "license": "ISC"
+}

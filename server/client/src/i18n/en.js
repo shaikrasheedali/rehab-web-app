@@ -1,0 +1,118 @@
+export const en = {
+  // Accessibility Bar & Common
+  accessibilityBanner: "Wheelchair Accessible · 24/7 Skilled Nursing · Khammam",
+  highContrast: "High Contrast",
+  darkMode: "Dark Mode",
+  lightMode: "Light Mode",
+  largeText: "Larger Text",
+  langChoice: "Language",
+  searchPlaceholder: "Search services, packages, pages...",
+  staffPortal: "Secure staff portal",
+  callUs: "Call 24/7",
+  whatsappChat: "Chat on WhatsApp",
+
+  // Navigation
+  home: "Home",
+  services: "Services",
+  packages: "Care Packages",
+  addons: "Add-on Services",
+  about: "About Us",
+  gallery: "Gallery",
+  blog: "Blog",
+  contact: "Contact Us",
+  inquiry: "Care Basket",
+  estimator: "Care Estimator",
+  quote: "Request a Care Plan",
+
+  // Hero
+  heroTag: "Trusted Rehabilitation in Khammam",
+  heroTitle: "Recovery feels possible when care feels",
+  heroAccent: "personal.",
+  heroCopy: "Doctor-guided rehabilitation, round-the-clock nursing and compassionate long-term care—all coordinated around one person, one family and one clear plan.",
+  explore: "Explore services",
+  talk: "Talk to our care team",
+  available: "Admissions team available",
+  confidential: "Confidential & family-centred",
+  familyRating: "4.9 / 5 family rating",
+  trustedLocal: "Trusted local care",
+  recoveryPlan: "Recovery plan",
+  onTrack: "On track",
+
+  // Home Stats & Highlights
+  statNursing: "24/7 Skilled nursing",
+  statDisciplines: "10+ Care disciplines",
+  statLocations: "2 Khammam locations",
+  statAccess: "AAA Accessibility target",
+  why: "Why families choose us",
+  whySubtitle: "From first call through discharge, one care coordinator helps your family understand the next step.",
+  featureRehabTitle: "Specialist rehabilitation",
+  featureRehabText: "Goal-led stroke, neurological, orthopedic and post-operative therapy.",
+  featureHumanTitle: "Care that stays human",
+  featureHumanText: "Attentive nursing, respectful routines and frequent family communication.",
+  featurePlanTitle: "One coordinated plan",
+  featurePlanText: "Doctors, therapists and nurses working from a shared recovery roadmap.",
+
+  // Recovery Roadmap
+  roadmapEyebrow: "Your recovery roadmap",
+  roadmapTitle: "A care plan built around where you are today.",
+  step1Title: "Listen & assess",
+  step1Text: "We understand the diagnosis, daily needs and your family's priorities.",
+  step2Title: "Build the care team",
+  step2Text: "The right mix of doctor, nurse, therapist and care coordinator.",
+  step3Title: "Measure meaningful progress",
+  step3Text: "Transparent goals, weekly reviews and clear family updates.",
+  buildInitialPlan: "Build an initial care plan",
+
+  // Packages & Add-ons
+  packagesEyebrow: "Care packages",
+  packagesTitle: "One clear package, with optional support when needed.",
+  packagesSubtitle: "Choose from the currently available packages, then add off-package services only when they are useful.",
+  includedInPackage: "Included in the package",
+  privatePricing: "Private quote provided",
+  choosePackage: "Choose package",
+  selected: "Selected",
+  continue: "Continue",
+  viewPackages: "View care packages",
+  viewOptional: "View optional services",
+  viewDetails: "View details",
+  addService: "+ Add",
+  addedToBasket: "Added to inquiry",
+
+  // Testimonial & CTA
+  testimonialQuote: "“The doctors explained each milestone, the nurses knew every detail, and our family never felt out of the loop.”",
+  testimonialAuthor: "Resident family member",
+  testimonialLocation: "Verified care feedback · Khammam",
+  ctaEyebrow: "Start with a conversation",
+  ctaTitle: "Not sure what level of care is right?",
+  ctaSubtitle: "Tell us what is happening. A care coordinator will help map the next step.",
+  ctaButton: "Request a call back",
+
+  // About
+  aboutEyebrow: "About & infrastructure",
+  aboutTitle: "A calm, capable place to recover.",
+  aboutCopy: "Purposeful spaces, accessible movement routes and a team shaped around dignity, safety and measurable rehabilitation.",
+  aboutCampusTitle: "Prakash Nagar Campus",
+  aboutCampusAddress: "Near AVR Homes, Chinna Venkatagiri Cross Road, Khammam – 507001, Telangana",
+  campusVisit: "Arrange a campus visit",
+
+  // Contact
+  contactEyebrow: "Contact us",
+  contactTitle: "A clear conversation can make the next step easier.",
+  contactCopy: "Ask about admissions, rehabilitation, long-stay support, availability or an existing care plan.",
+  yourName: "Your name *",
+  phoneNumber: "Phone number *",
+  emailAddress: "Email address",
+  preferredReply: "Preferred reply",
+  topic: "Topic",
+  message: "Message *",
+  consentAgreement: "I consent to Sri Thirumala Care using these details to respond to this request.",
+  sendSecurely: "Send securely",
+
+  // Footer
+  footerDescription: "Clinical rehabilitation, compassionate nursing and long-term care for families across Khammam.",
+  footerCareHeading: "Care & Services",
+  footerCampusHeading: "Prakash Nagar Campus",
+  footerHoursHeading: "Here when you need us",
+  footerHoursText: "24/7 nursing support\nAdmissions: 8:00 AM–8:00 PM",
+  footerCopyright: "© 2026 Sri Thirumala Rehabilitation Centre & Nursing Home. All rights reserved."
+};

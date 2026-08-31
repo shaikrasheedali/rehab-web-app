@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id        String   @id
+  name      String
+  kind      String   // "in-package" | "off-package"
+  rate      Float
+  summary   String
+  content   String
+  benefits  String   // JSON string array
+  images    String   // JSON string array
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Package {
+  id         String   @id
+  name       String
+  rate       Float
+  benefits   String   // JSON string array
+  serviceIds String   // JSON string array of Service IDs
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Inquiry {
+  id                  String   @id
+  patient             String
+  contact             String
+  phone               String
+  email               String?
+  need                String
+  date                String
+  start               String?
+  duration            String
+  language            String   @default("English")
+  room                String   @default("No preference")
+  currentLocation     String   @default("At home")
+  packageId           String?
+  offPackageServiceIds String  @default("[]") // JSON string array
+  status              String   @default("New") // "New" | "Contacted" | "Quote sent" | "Admitted"
+  priority            String   @default("Normal") // "Normal" | "High" | "Medium"
+  basket              String   @default("[]") // JSON string array
+  consent             Boolean  @default(true)
+  contactRequest      Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Accommodation {
+  id        String   @id // e.g. "ROOM-101", "BED-201-A"
+  type      String   // "Room" | "Bed"
+  label     String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admission {
+  id                  String   @id // e.g. "ADM-1042"
+  patient             String
+  age                 Int?
+  gender              String?
+  contact             String
+  phone               String
+  address             String?
+  need                String?
+  language            String?  @default("English")
+  currentLocation     String?  @default("At home")
+  roomPreference      String?  @default("No preference")
+  admissionDate       String
+  expectedDischarge   String?
+  actualDischarge     String?
+  stayType            String   @default("staying") // "staying" | "non-staying"
+  accommodationId     String?
+  packageId           String?
+  offPackageServiceIds String  @default("[]") // JSON string array
+  sourceInquiryId     String?
+  status              String   @default("Admitted") // "Admitted" | "Discharged"
+  dischargeSummary    String?
+  finalBill           String?  // JSON string
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  progressRecords     ResidentProgress[]
+  billingProfile      BillingProfile?
+  payments            Payment[]
+}
+
+model ResidentProgress {
+  id          String    @id
+  admissionId String
+  admission   Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
+  at          DateTime  @default(now())
+  author      String
+  status      String
+  category    String
+  note        String
+  createdAt   DateTime  @default(now())
+}
+
+model BillingProfile {
+  id                  String    @id
+  admissionId         String    @unique
+  admission           Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
+  start               String
+  end                 String
+  packageId           String?
+  packageDiscountType String    @default("percent")
+  packageDiscount     Float     @default(0)
+  addOns              String    @default("[]") // JSON string array of add-on lines
+  customLines         String    @default("[]") // JSON string array of custom lines
+  globalType          String    @default("percent")
+  globalDiscount      Float     @default(0)
+  tax                 Float     @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Payment {
+  id          String    @id
+  admissionId String
+  admission   Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
+  amount      Float
+  at          DateTime  @default(now())
+  note        String?
+  method      String    @default("UPI")
+  createdAt   DateTime  @default(now())
+}
+
+model MediaItem {
+  id          String   @id
+  section     String   // "blog" | "testimonial" | "post"
+  subtype     String   // "article" | "testimonial-video" | "youtube-video" | "instagram-post" | "instagram-reel" | "facebook-reel" | "facebook-post" | "x-post" | "image"
+  title       String
+  excerpt     String?
+  caption     String?
+  content     String
+  mediaUrl    String?
+  image       String?
+  images      String   @default("[]") // JSON string array
+  author      String
+  publishedAt String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

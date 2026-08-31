@@ -1,0 +1,160 @@
+// MySQL Production Schema for Sri Thirumala Full-Stack
+// To migrate to MySQL, update your .env DATABASE_URL to a MySQL connection string
+// and run: npx prisma migrate deploy --schema=./prisma/schema.mysql.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id        String   @id @db.VarChar(64)
+  name      String   @db.VarChar(255)
+  kind      String   @db.VarChar(32) // "in-package" | "off-package"
+  rate      Float
+  summary   String   @db.Text
+  content   String   @db.LongText
+  benefits  String   @db.Text // JSON string array
+  images    String   @db.LongText // JSON string array
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Package {
+  id         String   @id @db.VarChar(64)
+  name       String   @db.VarChar(255)
+  rate       Float
+  benefits   String   @db.Text // JSON string array
+  serviceIds String   @db.Text // JSON string array of Service IDs
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Inquiry {
+  id                  String   @id @db.VarChar(64)
+  patient             String   @db.VarChar(255)
+  contact             String   @db.VarChar(255)
+  phone               String   @db.VarChar(64)
+  email               String?  @db.VarChar(255)
+  need                String   @db.Text
+  date                String   @db.VarChar(64)
+  start               String?  @db.VarChar(64)
+  duration            String   @db.VarChar(64)
+  language            String   @default("English") @db.VarChar(64)
+  room                String   @default("No preference") @db.VarChar(64)
+  currentLocation     String   @default("At home") @db.VarChar(64)
+  packageId           String?  @db.VarChar(64)
+  offPackageServiceIds String  @default("[]") @db.Text
+  status              String   @default("New") @db.VarChar(64)
+  priority            String   @default("Normal") @db.VarChar(64)
+  basket              String   @default("[]") @db.Text
+  consent             Boolean  @default(true)
+  contactRequest      Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Accommodation {
+  id        String   @id @db.VarChar(64)
+  type      String   @db.VarChar(32) // "Room" | "Bed"
+  label     String   @db.VarChar(255)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admission {
+  id                  String   @id @db.VarChar(64)
+  patient             String   @db.VarChar(255)
+  age                 Int?
+  gender              String?  @db.VarChar(32)
+  contact             String   @db.VarChar(255)
+  phone               String   @db.VarChar(64)
+  address             String?  @db.Text
+  need                String?  @db.Text
+  language            String?  @default("English") @db.VarChar(64)
+  currentLocation     String?  @default("At home") @db.VarChar(64)
+  roomPreference      String?  @default("No preference") @db.VarChar(64)
+  admissionDate       String   @db.VarChar(64)
+  expectedDischarge   String?  @db.VarChar(64)
+  actualDischarge     String?  @db.VarChar(64)
+  stayType            String   @default("staying") @db.VarChar(32)
+  accommodationId     String?  @db.VarChar(64)
+  packageId           String?  @db.VarChar(64)
+  offPackageServiceIds String  @default("[]") @db.Text
+  sourceInquiryId     String?  @db.VarChar(64)
+  status              String   @default("Admitted") @db.VarChar(64)
+  dischargeSummary    String?  @db.LongText
+  finalBill           String?  @db.LongText
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  progressRecords     ResidentProgress[]
+  billingProfile      BillingProfile?
+  payments            Payment[]
+}
+
+model ResidentProgress {
+  id          String    @id @db.VarChar(64)
+  admissionId String    @db.VarChar(64)
+  admission   Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
+  at          DateTime  @default(now())
+  author      String    @db.VarChar(255)
+  status      String    @db.VarChar(64)
+  category    String    @db.VarChar(64)
+  note        String    @db.Text
+  createdAt   DateTime  @default(now())
+}
+
+model BillingProfile {
+  id                  String    @id @db.VarChar(64)
+  admissionId         String    @unique @db.VarChar(64)
+  admission           Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
+  start               String    @db.VarChar(64)
+  end                 String    @db.VarChar(64)
+  packageId           String?   @db.VarChar(64)
+  packageDiscountType String    @default("percent") @db.VarChar(32)
+  packageDiscount     Float     @default(0)
+  addOns              String    @default("[]") @db.Text
+  customLines         String    @default("[]") @db.Text
+  globalType          String    @default("percent") @db.VarChar(32)
+  globalDiscount      Float     @default(0)
+  tax                 Float     @default(0)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Payment {
+  id          String    @id @db.VarChar(64)
+  admissionId String    @db.VarChar(64)
+  admission   Admission @relation(fields: [admissionId], references: [id], onDelete: Cascade)
+  amount      Float
+  at          DateTime  @default(now())
+  note        String?   @db.Text
+  method      String    @default("UPI") @db.VarChar(64)
+  createdAt   DateTime  @default(now())
+}
+
+model MediaItem {
+  id          String   @id @db.VarChar(64)
+  section     String   @db.VarChar(32)
+  subtype     String   @db.VarChar(64)
+  title       String   @db.VarChar(255)
+  excerpt     String?  @db.Text
+  caption     String?  @db.Text
+  content     String   @db.LongText
+  mediaUrl    String?  @db.VarChar(500)
+  image       String?  @db.LongText
+  images      String   @default("[]") @db.LongText
+  author      String   @db.VarChar(255)
+  publishedAt String   @db.VarChar(64)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
